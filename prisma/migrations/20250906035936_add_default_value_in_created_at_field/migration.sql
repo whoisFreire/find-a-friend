@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "public"."Org" ALTER COLUMN "created_at" SET DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "public"."Pet" ALTER COLUMN "created_at" SET DEFAULT CURRENT_TIMESTAMP;
