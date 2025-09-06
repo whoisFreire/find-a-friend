@@ -1,7 +1,7 @@
 import { PetRepository } from '@/repositories/pet-repository'
 import { Pet, PetSize } from '@prisma/client'
 
-interface CreatePetUseCaseRequest {
+interface RegisterPetUseCaseRequest {
   name?: string | null
   color?: string | null
   age?: number | null
@@ -11,11 +11,11 @@ interface CreatePetUseCaseRequest {
   size: PetSize
 }
 
-interface CreatePetUseCaseResponse {
+interface RegisterPetUseCaseResponse {
   pet: Pet
 }
 
-export class CreatePetUseCase {
+export class RegisterPetUseCase {
   constructor(private repository: PetRepository) {}
 
   async execute({
@@ -26,7 +26,7 @@ export class CreatePetUseCase {
     orgId,
     size,
     species,
-  }: CreatePetUseCaseRequest): Promise<CreatePetUseCaseResponse> {
+  }: RegisterPetUseCaseRequest): Promise<RegisterPetUseCaseResponse> {
     const pet = await this.repository.create({
       org_id: orgId,
       size,
