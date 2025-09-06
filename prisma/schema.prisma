@@ -29,20 +29,12 @@ model Pet {
   org Org @relation(fields: [org_id], references: [id])
 }
 
-model City {
-  id    String @id @default(uuid())
-  name  String
-  state String
-  Org   Org[]
-}
-
 model Org {
   id         String   @id @default(uuid())
   address    String
   phone      String
-  city_id    String
+  city       String
   created_at DateTime @default(now())
 
-  Pet  Pet[]
-  City City  @relation(fields: [city_id], references: [id])
+  Pet Pet[]
 }

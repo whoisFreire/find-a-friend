@@ -4,7 +4,7 @@ import { Org } from '@prisma/client'
 interface CreateOrgUseCaseRequest {
   address: string
   phone: string
-  cityId: string
+  city: string
 }
 
 interface CreateOrgUseCaseResponse {
@@ -17,12 +17,12 @@ export class CreateOrgUseCase {
   async execute({
     address,
     phone,
-    cityId,
+    city,
   }: CreateOrgUseCaseRequest): Promise<CreateOrgUseCaseResponse> {
     const org = await this.repository.create({
       address,
       phone,
-      city_id: cityId,
+      city,
     })
 
     return {

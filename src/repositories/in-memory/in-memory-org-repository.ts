@@ -10,7 +10,7 @@ export class InMemoryOrgRepository implements OrgRepository {
       address: data.address,
       phone: data.phone,
       created_at: new Date(),
-      city_id: data.city_id ?? null,
+      city: data.city,
     }
 
     this.items.push(org)

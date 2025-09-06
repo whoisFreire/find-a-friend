@@ -14,7 +14,7 @@ describe('Create Org Use Case', () => {
     const { org } = await sut.execute({
       address: 'test',
       phone: '11999999999',
-      cityId: 'city-id',
+      city: 'test city',
     })
 
     expect(org.id).toEqual(expect.any(String))
