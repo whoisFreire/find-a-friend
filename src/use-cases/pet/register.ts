@@ -2,10 +2,10 @@ import { PetRepository } from '@/repositories/pet-repository'
 import { Pet, PetSize } from '@prisma/client'
 
 interface RegisterPetUseCaseRequest {
-  name?: string | null
-  color?: string | null
-  age?: number | null
-  imageUrl?: string | null
+  name?: string
+  color?: string
+  age?: number
+  imageUrl?: string
   species: string
   orgId: string
   size: PetSize

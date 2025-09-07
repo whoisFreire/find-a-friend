@@ -35,6 +35,19 @@ model Org {
   phone      String
   city       String
   created_at DateTime @default(now())
+  Pet        Pet[]
+  User       User[]
+}
 
-  Pet Pet[]
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String
+  password_hash String
+  city          String?
+  state         String?
+  created_at    DateTime @default(now())
+
+  org    Org?    @relation(fields: [org_id], references: [id])
+  org_id String?
 }
