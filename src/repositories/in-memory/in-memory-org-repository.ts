@@ -9,6 +9,8 @@ export class InMemoryOrgRepository implements OrgRepository {
       id: randomUUID(),
       address: data.address,
       phone: data.phone,
+      email: data.email,
+      password_hash: data.password_hash,
       created_at: new Date(),
       city: data.city,
     }

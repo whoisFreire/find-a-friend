@@ -30,13 +30,15 @@ model Pet {
 }
 
 model Org {
-  id         String   @id @default(uuid())
-  address    String
-  phone      String
-  city       String
-  created_at DateTime @default(now())
-  Pet        Pet[]
-  User       User[]
+  id            String   @id @default(uuid())
+  address       String
+  phone         String
+  email         String
+  password_hash String
+  city          String
+  created_at    DateTime @default(now())
+  Pet           Pet[]
+  User          User[]
 }
 
 model User {

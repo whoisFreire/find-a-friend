@@ -8,7 +8,7 @@ API para a adoção de animais, a FindAFriend API, utilizando SOLID e testes.
 - [x] Deve ser possível visualizar detalhes de um pet para adoção;
 - [x] Deve ser possível se cadastrar como uma ORG;
 - [ ] Deve ser possível realizar login como uma ORG;
-- [ ] Deve ser possivel realizar login como usuário;
+- [x] Deve ser possivel realizar login como usuário;
 ### Regras de negócio
 
 - [ ] Para listar os pets, obrigatoriamente precisamos informar a cidade;

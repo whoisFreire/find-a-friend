@@ -15,6 +15,8 @@ describe('Create Org Use Case', () => {
       address: 'test',
       phone: '11999999999',
       city: 'test city',
+      email: 'org@example.com',
+      password: '123456',
     })
 
     expect(org.id).toEqual(expect.any(String))
