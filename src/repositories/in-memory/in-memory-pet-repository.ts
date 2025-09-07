@@ -2,8 +2,11 @@ import { Prisma, Pet } from '@prisma/client'
 import { randomUUID } from 'node:crypto'
 import { PetQuery, PetRepository } from '../pet-repository'
 import { ValidPetFilterField } from '../schemas/pet-schema'
+import { OrgRepository } from '../org-repository'
 
 export class InMemoryPetRepository implements PetRepository {
+  constructor(private orgsRepository: OrgRepository) {}
+
   public items: Pet[] = []
   async create(data: Prisma.PetUncheckedCreateInput) {
     const pet = {
@@ -34,15 +37,28 @@ export class InMemoryPetRepository implements PetRepository {
   }
 
   async findManyByQuery(query: PetQuery) {
-    let filteredPets = this.items.filter((pet) => pet.adopted_at === null)
+    const { city, ...otherFilters } = query
+
+    const orgsInCity = await this.orgsRepository.findManyByCity(city.value)
+    if (!orgsInCity) {
+      return []
+    }
+    const orgsInCityIds = new Set(orgsInCity.map((org) => org.id))
+
+    let filteredPets = this.items.filter((pet) => {
+      const isNotAdopted = pet.adopted_at === null
+      const belongsToCityOrg = orgsInCityIds.has(pet.org_id)
+
+      return isNotAdopted && belongsToCityOrg
+    })
 
     if (!filteredPets) {
       return null
     }
 
     for (const key in query) {
-      const validKey = key as ValidPetFilterField
-      const queryField = query[validKey]
+      const validKey = key as Exclude<ValidPetFilterField, 'city'>
+      const queryField = otherFilters[validKey]
 
       if (!queryField) {
         continue

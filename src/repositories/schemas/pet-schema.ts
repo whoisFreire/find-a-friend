@@ -5,6 +5,8 @@ export const petModelSchema = {
   size: { type: 'enum', filter: 'equals' },
   species: { type: 'string', filter: 'equals' },
   org_id: { type: 'string', filter: 'equals' },
+
+  city: { type: 'string', filter: 'equals' },
 } as const
 
 export type PetModelSchema = typeof petModelSchema

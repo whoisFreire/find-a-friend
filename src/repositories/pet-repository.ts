@@ -1,13 +1,18 @@
 import { Pet, Prisma } from '@prisma/client'
-// Precisamos importar o tipo dos campos válidos
 import { ValidPetFilterField } from './schemas/pet-schema'
 
-export type PetQuery = {
-  [key in ValidPetFilterField]?: {
+export type RequiredPetQueryFields = {
+  city: { value: string; filter: 'equals' }
+}
+
+export type OptionalPetQueryFields = {
+  [key in Exclude<ValidPetFilterField, 'city'>]?: {
     value: string | number
     filter: 'contains' | 'equals'
   }
 }
+
+export type PetQuery = RequiredPetQueryFields & OptionalPetQueryFields
 
 export interface PetRepository {
   create(data: Prisma.PetUncheckedCreateInput): Promise<Pet>

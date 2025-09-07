@@ -1,10 +1,15 @@
-import { PetQuery, PetRepository } from '@/repositories/pet-repository'
+import {
+  OptionalPetQueryFields,
+  PetQuery,
+  PetRepository,
+} from '@/repositories/pet-repository'
 import {
   PetModelSchema,
   ValidPetFilterField,
 } from '@/repositories/schemas/pet-schema'
 import { Pet } from '@prisma/client'
 import { InvalidFilterFieldError } from '../errors/invalid-filtered-field-error'
+import { RequiredFieldError } from '../errors/required-field-error'
 
 type SearchPetsUseCaseRequestQuery = {
   [key: string]: string
@@ -27,14 +32,23 @@ export class SearchPetsUseCase {
   async execute({
     query,
   }: SearchPetsUseCaseRequest): Promise<SearchPetsUseCaseResponse> {
-    const processedQuery: PetQuery = {}
+    if (!query.city || query.city.trim() === '') {
+      throw new RequiredFieldError('city')
+    }
+    const cityFilter = { value: query.city, filter: 'equals' as const }
+
+    const optionalFilters: OptionalPetQueryFields = {}
 
     for (const key in query) {
+      if (key === 'city') {
+        continue
+      }
+
       if (!Object.prototype.hasOwnProperty.call(this.petSchema, key)) {
         throw new InvalidFilterFieldError(key)
       }
 
-      const validKey = key as ValidPetFilterField
+      const validKey = key as Exclude<ValidPetFilterField, 'city'>
       const schemaField = this.petSchema[validKey]
       const value = query[key]
 
@@ -44,7 +58,7 @@ export class SearchPetsUseCase {
         case 'number': {
           const numberValue = parseInt(value, 10)
           if (!isNaN(numberValue)) {
-            processedQuery[validKey] = {
+            optionalFilters[validKey] = {
               value: numberValue,
               filter: schemaField.filter,
             }
@@ -53,20 +67,22 @@ export class SearchPetsUseCase {
         }
         case 'string':
         case 'enum':
-          processedQuery[validKey] = { value, filter: schemaField.filter }
+          optionalFilters[validKey] = { value, filter: schemaField.filter }
           break
       }
     }
 
-    const pets = await this.repository.findManyByQuery(processedQuery)
+    const finalQuery: PetQuery = {
+      city: cityFilter,
+      ...optionalFilters,
+    }
+
+    const pets = await this.repository.findManyByQuery(finalQuery)
 
     if (!pets) {
-      return {
-        pets: [],
-      }
+      return { pets: [] }
     }
-    return {
-      pets,
-    }
+
+    return { pets }
   }
 }
