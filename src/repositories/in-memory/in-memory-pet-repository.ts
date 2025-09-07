@@ -1,6 +1,7 @@
 import { Prisma, Pet } from '@prisma/client'
 import { randomUUID } from 'node:crypto'
-import { PetRepository } from '../pet-repository'
+import { PetQuery, PetRepository } from '../pet-repository'
+import { ValidPetFilterField } from '../schemas/pet-schema'
 
 export class InMemoryPetRepository implements PetRepository {
   public items: Pet[] = []
@@ -30,5 +31,46 @@ export class InMemoryPetRepository implements PetRepository {
     }
 
     return pet
+  }
+
+  async findManyByQuery(query: PetQuery) {
+    let filteredPets = this.items.filter((pet) => pet.adopted_at === null)
+
+    if (!filteredPets) {
+      return null
+    }
+
+    for (const key in query) {
+      const validKey = key as ValidPetFilterField
+      const queryField = query[validKey]
+
+      if (!queryField) {
+        continue
+      }
+
+      const { value, filter } = queryField
+
+      filteredPets = filteredPets.filter((pet) => {
+        const petValue = pet[validKey]
+
+        if (petValue === null || petValue === undefined) {
+          return false
+        }
+
+        if (filter === 'equals') {
+          return petValue === value
+        }
+
+        if (filter === 'contains') {
+          return String(petValue)
+            .toLowerCase()
+            .includes(String(value).toLowerCase())
+        }
+
+        return true
+      })
+    }
+
+    return filteredPets
   }
 }
