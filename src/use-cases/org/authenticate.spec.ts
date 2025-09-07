@@ -1,35 +1,39 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { hash } from 'bcrypt'
 import { env } from '@/env'
-import { AuthenticateUserUseCase } from './authenticate'
+import { AuthenticateOrgUseCase } from './authenticate'
 import { InvalidCredentialsError } from '../errors/invalid-credentials-error'
+import { InMemoryOrgRepository } from '@/repositories/in-memory/in-memory-org-repository'
 
-let repository: InMemoryUserRepository
-let sut: AuthenticateUserUseCase
-describe('Authenticate User Use Case', () => {
+let repository: InMemoryOrgRepository
+let sut: AuthenticateOrgUseCase
+describe('Authenticate Org Use Case', () => {
   beforeEach(() => {
-    repository = new InMemoryUserRepository()
-    sut = new AuthenticateUserUseCase(repository)
+    repository = new InMemoryOrgRepository()
+    sut = new AuthenticateOrgUseCase(repository)
   })
 
   it('should be able to authenticate', async () => {
     await repository.create({
-      name: 'John Doe',
+      address: 'test',
+      city: 'test',
+      phone: '11999999999',
       email: 'johndoe@example.com',
       password_hash: await hash('123456', env.ENCRYPT_SALT),
     })
 
-    const { user } = await sut.execute({
+    const { org } = await sut.execute({
       email: 'johndoe@example.com',
       password: '123456',
     })
-    expect(user.id).toEqual(expect.any(String))
+    expect(org.id).toEqual(expect.any(String))
   })
 
   it('should not be able to authenticate wrong password', async () => {
     await repository.create({
-      name: 'John Doe',
+      address: 'test',
+      city: 'test',
+      phone: '11999999999',
       email: 'johndoe@example.com',
       password_hash: await hash('123456', env.ENCRYPT_SALT),
     })
